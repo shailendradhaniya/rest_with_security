@@ -1,12 +1,17 @@
 package com.sha.rest_security.domains;
 
-import java.io.Serializable;
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 
 /**
@@ -16,7 +21,7 @@ import java.util.List;
 @Entity
 @Table(name="roles")
 @NamedQuery(name="Role.findAll", query="SELECT r FROM Role r")
-public class Role implements Serializable,GrantedAuthority {
+public class Role extends BaseEntity implements GrantedAuthority {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -24,20 +29,8 @@ public class Role implements Serializable,GrantedAuthority {
 	@Column(unique=true, nullable=false)
 	private int id;
 
-	@Column(name="created_by", length=36)
-	private String createdBy;
-
-	@Column(name="created_ts", nullable=false)
-	private Timestamp createdTs;
-
 	@Column(length=250)
 	private String description;
-
-	@Column(name="modified_by", length=36)
-	private String modifiedBy;
-
-	@Column(name="modified_ts", nullable=false)
-	private Timestamp modifiedTs;
 
 	@Column(nullable=false, length=50)
 	private String rolename;
@@ -61,44 +54,12 @@ public class Role implements Serializable,GrantedAuthority {
 		this.id = id;
 	}
 
-	public String getCreatedBy() {
-		return this.createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Timestamp getCreatedTs() {
-		return this.createdTs;
-	}
-
-	public void setCreatedTs(Timestamp createdTs) {
-		this.createdTs = createdTs;
-	}
-
 	public String getDescription() {
 		return this.description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getModifiedBy() {
-		return this.modifiedBy;
-	}
-
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-
-	public Timestamp getModifiedTs() {
-		return this.modifiedTs;
-	}
-
-	public void setModifiedTs(Timestamp modifiedTs) {
-		this.modifiedTs = modifiedTs;
 	}
 
 	public String getRolename() {

@@ -1,9 +1,15 @@
 package com.sha.rest_security.domains;
 
-import java.io.Serializable;
-import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 /**
@@ -13,7 +19,7 @@ import java.util.List;
 @Entity
 @Table(name="users")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
-public class User implements Serializable {
+public class User extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -21,20 +27,8 @@ public class User implements Serializable {
 	@Column(unique=true, nullable=false, length=36)
 	private String id;
 
-	@Column(name="created_by", length=36)
-	private String createdBy;
-
-	@Column(name="created_ts", nullable=false)
-	private Timestamp createdTs;
-
 	@Column(nullable=false)
 	private byte enabled;
-
-	@Column(name="modified_by", length=36)
-	private String modifiedBy;
-
-	@Column(name="modified_ts")
-	private Timestamp modifiedTs;
 
 	@Column(nullable=false, length=100)
 	private String password;
@@ -68,44 +62,12 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public String getCreatedBy() {
-		return this.createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Timestamp getCreatedTs() {
-		return this.createdTs;
-	}
-
-	public void setCreatedTs(Timestamp createdTs) {
-		this.createdTs = createdTs;
-	}
-
 	public byte getEnabled() {
 		return this.enabled;
 	}
 
 	public void setEnabled(byte enabled) {
 		this.enabled = enabled;
-	}
-
-	public String getModifiedBy() {
-		return this.modifiedBy;
-	}
-
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-
-	public Timestamp getModifiedTs() {
-		return this.modifiedTs;
-	}
-
-	public void setModifiedTs(Timestamp modifiedTs) {
-		this.modifiedTs = modifiedTs;
 	}
 
 	public String getPassword() {
