@@ -1,6 +1,5 @@
 package com.sha.rest_security.controller;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ public class LoginController {
 		  UserDetails userDetails=myUserDetailService.loadUserByUsername(loginInfo.getUserName());
 		  MyUserPrincipal userPrincipal=(MyUserPrincipal)userDetails;
 		 List<Permission> perms =(List<Permission>)userPrincipal.getAuthorities();
-		 
 		  if(null!=userDetails) {
 			  if(loginInfo.getPassword().equalsIgnoreCase(loginInfo.getPassword())) {
 				  return new ResponseEntity<LoginResponse>(new LoginResponse(HttpStatus.OK.name(),String.valueOf(HttpStatus.OK.value()),"1234"),HttpStatus.OK); 
@@ -38,4 +36,6 @@ public class LoginController {
 		  }
 		return new ResponseEntity<LoginResponse>(new LoginResponse(HttpStatus.UNAUTHORIZED.name(),String.valueOf(HttpStatus.UNAUTHORIZED.value()),""),HttpStatus.UNAUTHORIZED);
 		}
+	  
+	  
 }
