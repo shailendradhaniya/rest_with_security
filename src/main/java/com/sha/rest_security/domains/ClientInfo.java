@@ -6,18 +6,18 @@ import java.sql.Timestamp;
 
 
 /**
- * The persistent class for the user_roles database table.
+ * The persistent class for the client_info database table.
  * 
  */
 @Entity
-@Table(name="user_roles")
-@NamedQuery(name="UserRole.findAll", query="SELECT u FROM UserRole u")
-public class UserRole implements Serializable {
+@Table(name="client_info")
+@NamedQuery(name="ClientInfo.findAll", query="SELECT c FROM ClientInfo c")
+public class ClientInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(unique=true, nullable=false, length=36)
 	private String id;
 
 	@Column(name="created_by", length=36)
@@ -26,23 +26,27 @@ public class UserRole implements Serializable {
 	@Column(name="created_ts", nullable=false)
 	private Timestamp createdTs;
 
+	@Column(nullable=false)
+	private byte enabled;
+
 	@Column(name="modified_by", length=36)
 	private String modifiedBy;
 
 	@Column(name="modified_ts", nullable=false)
 	private Timestamp modifiedTs;
 
-	//bi-directional many-to-one association to Role
-	@ManyToOne
-	@JoinColumn(name="role_id", nullable=false)
-	private Role role;
+	@Column(name="secret_key", nullable=false, length=512)
+	private String secretKey;
+
+	@Column(name="secret_key_encrypted", nullable=false)
+	private byte secretKeyEncrypted;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;
 
-	public UserRole() {
+	public ClientInfo() {
 	}
 
 	public String getId() {
@@ -69,6 +73,14 @@ public class UserRole implements Serializable {
 		this.createdTs = createdTs;
 	}
 
+	public byte getEnabled() {
+		return this.enabled;
+	}
+
+	public void setEnabled(byte enabled) {
+		this.enabled = enabled;
+	}
+
 	public String getModifiedBy() {
 		return this.modifiedBy;
 	}
@@ -85,12 +97,20 @@ public class UserRole implements Serializable {
 		this.modifiedTs = modifiedTs;
 	}
 
-	public Role getRole() {
-		return this.role;
+	public String getSecretKey() {
+		return this.secretKey;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+	public byte getSecretKeyEncrypted() {
+		return this.secretKeyEncrypted;
+	}
+
+	public void setSecretKeyEncrypted(byte secretKeyEncrypted) {
+		this.secretKeyEncrypted = secretKeyEncrypted;
 	}
 
 	public User getUser() {

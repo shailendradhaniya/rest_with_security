@@ -6,18 +6,18 @@ import java.sql.Timestamp;
 
 
 /**
- * The persistent class for the user_roles database table.
+ * The persistent class for the persistent_logins database table.
  * 
  */
 @Entity
-@Table(name="user_roles")
-@NamedQuery(name="UserRole.findAll", query="SELECT u FROM UserRole u")
-public class UserRole implements Serializable {
+@Table(name="persistent_logins")
+@NamedQuery(name="PersistentLogin.findAll", query="SELECT p FROM PersistentLogin p")
+public class PersistentLogin implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(unique=true, nullable=false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(unique=true, nullable=false, length=36)
 	private String id;
 
 	@Column(name="created_by", length=36)
@@ -26,23 +26,27 @@ public class UserRole implements Serializable {
 	@Column(name="created_ts", nullable=false)
 	private Timestamp createdTs;
 
+	@Column(name="last_used", nullable=false)
+	private Timestamp lastUsed;
+
 	@Column(name="modified_by", length=36)
 	private String modifiedBy;
 
 	@Column(name="modified_ts", nullable=false)
 	private Timestamp modifiedTs;
 
-	//bi-directional many-to-one association to Role
-	@ManyToOne
-	@JoinColumn(name="role_id", nullable=false)
-	private Role role;
+	@Column(nullable=false, length=64)
+	private String series;
+
+	@Column(nullable=false, length=512)
+	private String token;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
 	private User user;
 
-	public UserRole() {
+	public PersistentLogin() {
 	}
 
 	public String getId() {
@@ -69,6 +73,14 @@ public class UserRole implements Serializable {
 		this.createdTs = createdTs;
 	}
 
+	public Timestamp getLastUsed() {
+		return this.lastUsed;
+	}
+
+	public void setLastUsed(Timestamp lastUsed) {
+		this.lastUsed = lastUsed;
+	}
+
 	public String getModifiedBy() {
 		return this.modifiedBy;
 	}
@@ -85,12 +97,20 @@ public class UserRole implements Serializable {
 		this.modifiedTs = modifiedTs;
 	}
 
-	public Role getRole() {
-		return this.role;
+	public String getSeries() {
+		return this.series;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setSeries(String series) {
+		this.series = series;
+	}
+
+	public String getToken() {
+		return this.token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public User getUser() {
