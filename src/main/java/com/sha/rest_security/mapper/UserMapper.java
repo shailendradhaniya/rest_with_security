@@ -15,8 +15,7 @@ import com.sha.rest_security.dto.SignUpRequest;
 public interface UserMapper {
 	@Mappings({
 		@Mapping(source="userName",target="username"),
-		@Mapping(source="password",target="password"),
-		@Mapping(target="role",ignore=true)
+		@Mapping(source="password",target="password")
 	})
     User signUpToEntity(SignUpRequest signUpReq);
 
