@@ -1,22 +1,41 @@
 package com.sha.rest_security.service;
 
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sha.rest_security.bean.MyUserPrincipal;
+import com.sha.rest_security.domains.ClientInfo;
+import com.sha.rest_security.domains.Role;
 import com.sha.rest_security.domains.User;
+import com.sha.rest_security.domains.UserRole;
 import com.sha.rest_security.dto.SignUpRequest;
 import com.sha.rest_security.mapper.UserMapper;
+import com.sha.rest_security.repository.ClientInfoRepository;
+import com.sha.rest_security.repository.RoleRepository;
 import com.sha.rest_security.repository.UserRepository;
+import com.sha.rest_security.repository.UserRoleRepository;
+import com.sha.rest_security.util.CryptographyUtil;
 
 @Service
 public class MyUserDetailService implements UserDetailsService {
 
 	@Autowired
     private UserRepository userRepository;
+	
+	@Autowired
+    private RoleRepository roleRepository;
+	
+	@Autowired
+    private UserRoleRepository userRoleRepository;
+	
+	@Autowired
+    private ClientInfoRepository clientInfoRepository;
 	
 	@Autowired
 	private UserMapper userMapper;
@@ -31,8 +50,48 @@ public class MyUserDetailService implements UserDetailsService {
         return new MyUserPrincipal(user);
       }
 	
-	public void register(SignUpRequest signUpReq) {
+	@Transactional
+	public User addNewUser(SignUpRequest signUpReq) throws NoSuchAlgorithmException {
 		 User user=userMapper.signUpToEntity(signUpReq);
+		 user.setEnabled(Boolean.TRUE);
+		 user.setPasswordEncrypted(Boolean.FALSE);
+		 user=userRepository.save(user);
+		 UserRole userRole=updateUserRole(user,signUpReq.getRole());
+		 user.addUserRole(userRole);
+		 ClientInfo clientInfo=addClientInfo(user);
+		 user.addClientInfo(clientInfo);
+		 user=userRepository.save(user);
+		 return user;
+	}
+	
+	public UserRole updateUserRole(User user,String roleName) {
+		if(null==user) {
+			throw new UsernameNotFoundException("Null User");
+		}
+		Role role=roleRepository.findByRolename(roleName);
+		UserRole userRole=new UserRole();
+		userRole.setRole(role);
+		userRole.setUser(user);
+		userRole=userRoleRepository.save(userRole);
+		return userRole;
+	}
+	
+	public ClientInfo addClientInfo(User user) throws NoSuchAlgorithmException {
+		if(null==user) {
+			throw new UsernameNotFoundException("Null User");
+		}
+		String secretKey=CryptographyUtil.generateSecretKey();
+		ClientInfo clientInfo=new ClientInfo();
+		clientInfo.setEnabled(Boolean.TRUE);
+		clientInfo.setSecretKey(secretKey);
+		clientInfo.setSecretKeyEncrypted(Boolean.FALSE);
+		clientInfo.setUser(user);
+		return clientInfoRepository.save(clientInfo);
 	}
 
+	public String getUserToken(MyUserPrincipal userPrincipal) {
+		ClientInfo clientInfo=clientInfoRepository.findByUserId(userPrincipal.getUser().getId());
+		
+		return null;
+	}
 }

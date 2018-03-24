@@ -10,22 +10,17 @@ CREATE TABLE permissions (
   UNIQUE KEY permission_name_UNIQUE (permission_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='permission / action allowed or disable example OP_READ_ACCOUNT, OP_DELETE_ACCOUNT etc';
 
-
-CREATE TABLE persistent_logins (
-   id varchar(36) NOT NULL,
-   series varchar(64) NOT NULL,
-   user_id varchar(36) NOT NULL,
-   token varchar(512) NOT NULL,
-   last_used timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+CREATE TABLE roles (
+   id int(11) NOT NULL,
+   rolename varchar(50) NOT NULL,
+   description varchar(250) DEFAULT NULL,
    created_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
    created_by varchar(36),
    last_modified_ts timestamp,
    last_modified_by varchar(36),
   PRIMARY KEY (id),
-  KEY fk_persistent_logins_userid_idx (user_id),
-  CONSTRAINT fk_persistent_logins_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+  UNIQUE KEY rolename_UNIQUE (rolename)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='user roles , generally authorities associated with user described in spring example ROLE_USER, ROLE_ADMIN authority';
 
 CREATE TABLE role_permissions (
    id bigint(10) NOT NULL AUTO_INCREMENT,
@@ -42,33 +37,6 @@ CREATE TABLE role_permissions (
   CONSTRAINT fk_role_perm_role_id FOREIGN KEY (role_id) REFERENCES roles` (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE roles (
-   id int(11) NOT NULL,
-   rolename varchar(50) NOT NULL,
-   description varchar(250) DEFAULT NULL,
-   created_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   created_by varchar(36),
-   last_modified_ts timestamp,
-   last_modified_by varchar(36),
-  PRIMARY KEY (id),
-  UNIQUE KEY rolename_UNIQUE (rolename)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='user roles , generally authorities associated with user described in spring example ROLE_USER, ROLE_ADMIN authority';
-
-CREATE TABLE user_roles (
-   id bigint(10) NOT NULL,
-   user_id varchar(36) NOT NULL,
-   role_id int(11) NOT NULL,
-   created_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   created_by varchar(36),
-   last_modified_ts timestamp,
-   last_modified_by varchar(36),
-  PRIMARY KEY (id),
-  KEY fk_user_role_userid_idx (user_id),
-  KEY fk_user_role_role_id_idx (role_id),
-  CONSTRAINT fk_user_role_role_id FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT fk_user_role_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='user associated roles';
-
 CREATE TABLE users (
    id varchar(36),
    username varchar(256) NOT NULL,
@@ -81,6 +49,37 @@ CREATE TABLE users (
    last_modified_by varchar(36),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE persistent_logins (
+   id varchar(36) NOT NULL,
+   series varchar(64) NOT NULL,
+   user_id varchar(36) NOT NULL,
+   token varchar(512) NOT NULL,
+   last_used timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   created_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   created_by varchar(36),
+   last_modified_ts timestamp,
+   last_modified_by varchar(36),
+  PRIMARY KEY (id),
+  KEY fk_persistent_logins_userid_idx (user_id),
+  CONSTRAINT fk_persistent_logins_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE user_roles (
+   id varchar(36) NOT NULL,
+   user_id varchar(36) NOT NULL,
+   role_id int(11) NOT NULL,
+   created_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   created_by varchar(36),
+   last_modified_ts timestamp,
+   last_modified_by varchar(36),
+  PRIMARY KEY (id),
+  KEY fk_user_role_userid_idx (user_id),
+  KEY fk_user_role_role_id_idx (role_id),
+  CONSTRAINT fk_user_role_role_id FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT fk_user_role_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='user associated roles';
 
 CREATE TABLE client_info (
    id varchar(36),

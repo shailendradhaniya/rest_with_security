@@ -12,18 +12,18 @@ public class SignUpResponse {
 	@JsonProperty("StatusCode")
 	private String statusCode;
 	
-	@JsonProperty("Token")
-	private String token;
+	@JsonProperty("Message")
+	private String message;
 
 	public SignUpResponse() {
 		super();
 	}
 
-	public SignUpResponse(String status, String statusCode, String token) {
+	public SignUpResponse(String status, String statusCode, String message) {
 		super();
 		this.status = status;
 		this.statusCode = statusCode;
-		this.token = token;
+		this.message = message;
 	}
 
 	public String getStatus() {
@@ -42,11 +42,12 @@ public class SignUpResponse {
 		this.statusCode = statusCode;
 	}
 
-	public String getToken() {
-		return token;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setToken(String token) {
-		this.token = token;
+	public void setMessage(String message) {
+		this.message = message;
 	}
+
 }

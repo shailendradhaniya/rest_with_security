@@ -31,6 +31,7 @@ public class LoginController {
 		 List<Permission> perms =(List<Permission>)userPrincipal.getAuthorities();
 		  if(null!=userDetails) {
 			  if(loginInfo.getPassword().equalsIgnoreCase(loginInfo.getPassword())) {
+				  String jwtToken=myUserDetailService.getUserToken(userPrincipal);
 				  return new ResponseEntity<LoginResponse>(new LoginResponse(HttpStatus.OK.name(),String.valueOf(HttpStatus.OK.value()),"1234"),HttpStatus.OK); 
 			  }
 		  }

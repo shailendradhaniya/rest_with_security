@@ -3,12 +3,13 @@ package com.sha.rest_security.domains;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -22,18 +23,19 @@ public class ClientInfo extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
 	@Column(unique=true, nullable=false, length=36)
 	private String id;
 
 	@Column(nullable=false)
-	private byte enabled;
+	private boolean enabled;
 
 	@Column(name="secret_key", nullable=false, length=512)
 	private String secretKey;
 
 	@Column(name="secret_key_encrypted", nullable=false)
-	private byte secretKeyEncrypted;
+	private boolean secretKeyEncrypted;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne
@@ -51,11 +53,11 @@ public class ClientInfo extends BaseEntity {
 		this.id = id;
 	}
 
-	public byte getEnabled() {
+	public boolean getEnabled() {
 		return this.enabled;
 	}
 
-	public void setEnabled(byte enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
@@ -67,11 +69,11 @@ public class ClientInfo extends BaseEntity {
 		this.secretKey = secretKey;
 	}
 
-	public byte getSecretKeyEncrypted() {
+	public boolean getSecretKeyEncrypted() {
 		return this.secretKeyEncrypted;
 	}
 
-	public void setSecretKeyEncrypted(byte secretKeyEncrypted) {
+	public void setSecretKeyEncrypted(boolean secretKeyEncrypted) {
 		this.secretKeyEncrypted = secretKeyEncrypted;
 	}
 

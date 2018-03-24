@@ -64,22 +64,30 @@ public class MyUserPrincipal implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return user.getEnabled()==0?false:true;
+		return user.getEnabled();
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return user.getEnabled()==0?false:true;
+		return user.getEnabled();
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return user.getEnabled()==0?false:true;
+		return user.getEnabled();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return user.getEnabled()==0?false:true;
+		return user.getEnabled();
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

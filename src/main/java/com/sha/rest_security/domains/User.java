@@ -1,15 +1,17 @@
 package com.sha.rest_security.domains;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -23,33 +25,34 @@ public class User extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	@Column(unique=true, nullable=false, length=36)
 	private String id;
 
 	@Column(nullable=false)
-	private byte enabled;
+	private boolean enabled;
 
 	@Column(nullable=false, length=100)
 	private String password;
 
 	@Column(name="password_encrypted", nullable=false)
-	private byte passwordEncrypted;
+	private boolean passwordEncrypted;
 
 	@Column(nullable=false, length=256)
 	private String username;
 
 	//bi-directional many-to-one association to PersistentLogin
 	@OneToMany(mappedBy="user")
-	private List<PersistentLogin> persistentLogins;
+	private List<PersistentLogin> persistentLogins=new ArrayList<>();
 
 	//bi-directional many-to-one association to UserRole
 	@OneToMany(mappedBy="user")
-	private List<UserRole> userRoles;
+	private List<UserRole> userRoles=new ArrayList<>();
 
 	//bi-directional many-to-one association to ClientInfo
 	@OneToMany(mappedBy="user")
-	private List<ClientInfo> clientInfos;
+	private List<ClientInfo> clientInfos=new ArrayList<>();
 
 	public User() {
 	}
@@ -62,11 +65,11 @@ public class User extends BaseEntity {
 		this.id = id;
 	}
 
-	public byte getEnabled() {
+	public boolean getEnabled() {
 		return this.enabled;
 	}
 
-	public void setEnabled(byte enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
@@ -78,11 +81,11 @@ public class User extends BaseEntity {
 		this.password = password;
 	}
 
-	public byte getPasswordEncrypted() {
+	public boolean getPasswordEncrypted() {
 		return this.passwordEncrypted;
 	}
 
-	public void setPasswordEncrypted(byte passwordEncrypted) {
+	public void setPasswordEncrypted(boolean passwordEncrypted) {
 		this.passwordEncrypted = passwordEncrypted;
 	}
 

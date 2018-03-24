@@ -27,7 +27,7 @@ public class Permission extends BaseEntity implements GrantedAuthority {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(unique=true, nullable=false)
-	private int id;
+	private Long id;
 
 	@Column(length=250)
 	private String description;
@@ -42,11 +42,11 @@ public class Permission extends BaseEntity implements GrantedAuthority {
 	public Permission() {
 	}
 
-	public int getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
