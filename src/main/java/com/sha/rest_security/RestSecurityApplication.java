@@ -1,7 +1,13 @@
 package com.sha.rest_security;
 
+import javax.servlet.Filter;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+
+import com.sha.rest_security.filters.JwtAuthenticationFilter;
 
 @SpringBootApplication
 public class RestSecurityApplication {
@@ -61,4 +67,20 @@ public class RestSecurityApplication {
 				}
 			});
 }*/
+	@Bean
+	public FilterRegistrationBean<Filter> someFilterRegistration() {
+
+	    FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<Filter>();
+	    registration.setFilter(jwtApiFilter());
+	    registration.addUrlPatterns("/api/*");
+	    registration.addInitParameter("paramName", "paramValue");
+	    registration.setName("jwtApiFilter");
+	    registration.setOrder(1);
+	    return registration;
+	} 
+
+	@Bean(name = "jwtApiFilter")
+	public Filter jwtApiFilter() {
+	    return new JwtAuthenticationFilter();
+	}
 }

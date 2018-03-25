@@ -1,6 +1,11 @@
 package com.sha.rest_security.service;
 
+import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +26,7 @@ import com.sha.rest_security.repository.RoleRepository;
 import com.sha.rest_security.repository.UserRepository;
 import com.sha.rest_security.repository.UserRoleRepository;
 import com.sha.rest_security.util.CryptographyUtil;
+import com.sha.rest_security.util.JwtUtil;
 
 @Service
 public class MyUserDetailService implements UserDetailsService {
@@ -89,9 +95,10 @@ public class MyUserDetailService implements UserDetailsService {
 		return clientInfoRepository.save(clientInfo);
 	}
 
-	public String getUserToken(MyUserPrincipal userPrincipal) {
-		ClientInfo clientInfo=clientInfoRepository.findByUserId(userPrincipal.getUser().getId());
-		
-		return null;
+	public String getUserToken(MyUserPrincipal userPrincipal) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		KeyPair keyPair=CryptographyUtil.getRSAKey("api_key");
+		String jwtToken=JwtUtil.createJWT(keyPair.getPrivate(), userPrincipal);
+		//save jwt token for user in db
+		return jwtToken;
 	}
 }
