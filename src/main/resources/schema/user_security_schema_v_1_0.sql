@@ -55,7 +55,7 @@ CREATE TABLE persistent_logins (
    id varchar(36) NOT NULL,
    series varchar(64) NOT NULL,
    user_id varchar(36) NOT NULL,
-   token varchar(512) NOT NULL,
+   token varchar(1000) NOT NULL,
    last_used timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    created_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
    created_by varchar(36),

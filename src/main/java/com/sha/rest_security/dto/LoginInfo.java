@@ -12,11 +12,15 @@ public class LoginInfo {
 	
 	@JsonProperty("Password")
 	private String password;
+	
+	@JsonProperty("RememberMe")
+	private boolean rememberMe;
 
-	public LoginInfo(String userName, String password) {
+	public LoginInfo(String userName, String password,boolean rememberMe) {
 		super();
 		this.userName = userName;
 		this.password = password;
+		this.rememberMe = rememberMe;
 	}
 
 	public LoginInfo() {
@@ -37,5 +41,13 @@ public class LoginInfo {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isRememberMe() {
+		return rememberMe;
+	}
+
+	public void setRememberMe(boolean rememberMe) {
+		this.rememberMe = rememberMe;
 	}
 }

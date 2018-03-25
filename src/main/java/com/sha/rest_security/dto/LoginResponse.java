@@ -5,13 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class LoginResponse {
-	@JsonProperty("Status")
-	private StatusEnum status;
-	
-	@JsonProperty("StatusCode")
-	private String statusCode;
-	
+public class LoginResponse{
+
 	@JsonProperty("Token")
 	private String token;
 
@@ -19,27 +14,8 @@ public class LoginResponse {
 		super();
 	}
 
-	public LoginResponse(StatusEnum status, String statusCode, String token) {
-		super();
-		this.status = status;
-		this.statusCode = statusCode;
+	public LoginResponse(String token) {
 		this.token = token;
-	}
-
-	public StatusEnum getStatus() {
-		return status;
-	}
-
-	public void setStatus(StatusEnum status) {
-		this.status = status;
-	}
-
-	public String getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
 	}
 
 	public String getToken() {

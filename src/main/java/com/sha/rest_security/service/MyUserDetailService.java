@@ -6,6 +6,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,12 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sha.rest_security.bean.MyUserPrincipal;
 import com.sha.rest_security.domains.ClientInfo;
+import com.sha.rest_security.domains.PersistentLogin;
 import com.sha.rest_security.domains.Role;
 import com.sha.rest_security.domains.User;
 import com.sha.rest_security.domains.UserRole;
+import com.sha.rest_security.dto.LoginInfo;
+import com.sha.rest_security.dto.LoginResponse;
 import com.sha.rest_security.dto.SignUpRequest;
 import com.sha.rest_security.mapper.UserMapper;
 import com.sha.rest_security.repository.ClientInfoRepository;
+import com.sha.rest_security.repository.PersistentLoginRepository;
 import com.sha.rest_security.repository.RoleRepository;
 import com.sha.rest_security.repository.UserRepository;
 import com.sha.rest_security.repository.UserRoleRepository;
@@ -42,6 +50,9 @@ public class MyUserDetailService implements UserDetailsService {
 	
 	@Autowired
     private ClientInfoRepository clientInfoRepository;
+	
+	@Autowired
+	private PersistentLoginRepository persistentLoginRepository;
 	
 	@Autowired
 	private UserMapper userMapper;
@@ -96,9 +107,58 @@ public class MyUserDetailService implements UserDetailsService {
 	}
 
 	public String getUserToken(MyUserPrincipal userPrincipal) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		KeyPair keyPair=CryptographyUtil.getRSAKey("api_key");
-		String jwtToken=JwtUtil.createJWT(keyPair.getPrivate(), userPrincipal);
 		//save jwt token for user in db
+		KeyPair keyPair=CryptographyUtil.getRSAKey("api_key");
+		PersistentLogin persistentLogin=persistentLoginRepository.findByUserId(userPrincipal.getUser().getId());
+		String jwtToken;
+		if(null!=persistentLogin && null!=persistentLogin.getToken() && !persistentLogin.getToken().isEmpty()) {
+			String lastToken=persistentLogin.getToken();
+			Date expDate=JwtUtil.getClaims(keyPair.getPrivate(),lastToken).getExpiration();
+			if(expDate.before(Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()))) {
+				//token expired
+				jwtToken=JwtUtil.createJWT(keyPair.getPrivate(), userPrincipal);
+			}
+			jwtToken=lastToken;
+		}else {
+			jwtToken=JwtUtil.createJWT(keyPair.getPrivate(), userPrincipal);
+		}
+		
+		
 		return jwtToken;
+	}
+
+	public LoginResponse login(LoginInfo loginInfo) {
+		UserDetails userDetails = loadUserByUsername(loginInfo.getUserName());
+		MyUserPrincipal userPrincipal = (MyUserPrincipal) userDetails;
+		if (null != userDetails) {
+			if (loginInfo.getPassword().equalsIgnoreCase(loginInfo.getPassword())) {
+				String jwtToken;
+				try {
+					jwtToken = getUserToken(userPrincipal);
+					if(loginInfo.isRememberMe()) {
+						savePeristentLogin(userPrincipal.getUser(),jwtToken);
+					}
+				} catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException
+						| IOException e) {
+					return new LoginResponse("Error generating token");
+				}
+				return new LoginResponse(jwtToken);
+			}
+		}
+		return new LoginResponse("");
+	}
+
+	public PersistentLogin savePeristentLogin(User user,String jwtToken) {
+		PersistentLogin persistentLogin=persistentLoginRepository.findByUserId(user.getId());
+		if(null==persistentLogin) {
+			persistentLogin=new PersistentLogin();
+			persistentLogin.setToken(jwtToken);
+			persistentLogin.setUser(user);
+			persistentLogin.setSeries("1.0");
+		}
+		persistentLogin.setLastUsed(Timestamp.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()));
+		return persistentLoginRepository.save(persistentLogin);
+		
+		
 	}
 }

@@ -42,7 +42,10 @@ public class JwtUtil {
 		}
 	
 	public static Object getClaimFromJwt(Key key,String jwtTokenString,String claimName) {
-		Claims claims=Jwts.parser().setSigningKey(key).parseClaimsJws(jwtTokenString).getBody();
+		Claims claims=getClaims(key, jwtTokenString);
 		return claims.get(claimName);
+	}
+	public static Claims getClaims(Key key,String jwtTokenString) {
+		return Jwts.parser().setSigningKey(key).parseClaimsJws(jwtTokenString).getBody();
 	}
 }

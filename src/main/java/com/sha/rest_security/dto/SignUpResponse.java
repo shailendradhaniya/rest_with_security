@@ -5,13 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class SignUpResponse {
-	@JsonProperty("Status")
-	private String status;
-	
-	@JsonProperty("StatusCode")
-	private String statusCode;
-	
+public class SignUpResponse{
+
 	@JsonProperty("Message")
 	private String message;
 
@@ -19,27 +14,8 @@ public class SignUpResponse {
 		super();
 	}
 
-	public SignUpResponse(String status, String statusCode, String message) {
-		super();
-		this.status = status;
-		this.statusCode = statusCode;
+	public SignUpResponse(String message) {
 		this.message = message;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
 	}
 
 	public String getMessage() {
